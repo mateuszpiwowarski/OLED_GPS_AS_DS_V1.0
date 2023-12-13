@@ -1,0 +1,5 @@
+../Core/Src/main.c:110:8:haversine_km	72	static
+../Core/Src/main.c:149:5:main	72	static
+../Core/Src/main.c:316:6:SystemClock_Config	88	static
+../Core/Src/main.c:361:6:HAL_UART_RxCpltCallback	16	static
+../Core/Src/main.c:376:6:Error_Handler	4	static,ignoring_inline_asm
