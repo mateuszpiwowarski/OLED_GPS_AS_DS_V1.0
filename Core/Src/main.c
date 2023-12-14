@@ -78,23 +78,23 @@ double total_distance = 0.0; // Used to store the total travelled distance
 
 NEO6_State GpsState;
 
-char LatitudeString[64];
-char LongitudeString[64];
-char SpeedString[64];
-char SatelitesNumberString[64];
+char LatitudeString[32];
+char LongitudeString[32];
+char SpeedString[32];
+char SatelitesNumberString[32];
 
 
 
 uint16_t readValue;
-float sensitivity = 0.04; // 0.1 for 20A Model
+float sensitivity = 0.04; // 0.4 for 50A Model
 float rawVoltage;
 float current;
-char current_string[64];
-char total_distance_string[64];
+char current_string[32];
+char total_distance_string[32];
 double current_distance;
 
 float temperature;
-char temp_string[64];
+char temp_string[16];
 
 
 /**
@@ -196,13 +196,13 @@ int main(void)
   while (1)
   {
 
-	 if((HAL_GetTick() - DS18B20_delay) > 1000) // Odświeżaj temperaturę co sekundę (1000 ms)
+	 if((HAL_GetTick() - DS18B20_delay) > 1000)
 	 {
 		 DS18B20_ReadAll();
 		 DS18B20_StartAll();
 
 		 uint8_t ROM_tmp[8];
-		 uint8_t i;
+		 uint8_t i;		//Iterator
 
 	    for(i = 0; i < DS18B20_Quantity(); i++)
 	    {
@@ -219,7 +219,7 @@ int main(void)
 	 }
 
 
-	  if((HAL_GetTick() - ADC_delay) > 250) // Odświeżaj odczyt ADC co 250 ms
+	  if((HAL_GetTick() - ADC_delay) > 250)
 	  {
 	   HAL_ADC_PollForConversion(&hadc1,1000);
 	   readValue = HAL_ADC_GetValue(&hadc1);
@@ -230,7 +230,7 @@ int main(void)
 	  }
 
 
-	  if((HAL_GetTick() - NEO6_delay) > 100) // Odświeżaj odczyt GPS co sekundę (1000 ms)
+	  if((HAL_GetTick() - NEO6_delay) > 100)
 	  {
 	  NEO6_Task(&GpsState);
 
@@ -247,7 +247,7 @@ int main(void)
 	  	 last_longitude = GpsState.Longitude;
 	  }
 
-	     // ... the rest of your GPS processing code here ...
+
 	  	sprintf(total_distance_string, "%.2f km", GpsState.total_distance); // write into the string the total distance with 2 decimal precision
 	    sprintf(LatitudeString, "%f", GpsState.Latitude);
 	    sprintf(LongitudeString, "%f", GpsState.Longitude);
@@ -260,46 +260,46 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	  if((HAL_GetTick() - OLED_delay) > 250) // Aktualizuj wyświetlacz co 250 ms
+	  if((HAL_GetTick() - OLED_delay) > 250)
 	   {
 		 SSD1306_GotoXY (0, 0);
 		 SSD1306_Puts ("TMP:", &Font_7x10, 1);
-	     SSD1306_GotoXY (28,0);  // przejdź do pozycji 0,0
-	     SSD1306_Puts (temp_string, &Font_7x10, 1); // wypisz temperaturę
+	     SSD1306_GotoXY (28,0);
+	     SSD1306_Puts (temp_string, &Font_7x10, 1);
 
 	     SSD1306_GotoXY (00, 10);
 	   	 SSD1306_Puts ("Prad:", &Font_7x10, 1);
-	     SSD1306_GotoXY (40,10); // przejdź do następnej linii
-	     SSD1306_Puts (current_string, &Font_7x10, 1); // wypisz prąd
+	     SSD1306_GotoXY (40,10);
+	     SSD1306_Puts (current_string, &Font_7x10, 1);
 
 
 	     SSD1306_GotoXY (0, 20);
 	     SSD1306_Puts ("P_GPS:", &Font_7x10, 1);
-	     SSD1306_GotoXY (40,20);// przejdź do następnej linii
-	     SSD1306_Puts (SpeedString, &Font_7x10, 1); // wypisz prędkość
+	     SSD1306_GotoXY (40,20);
+	     SSD1306_Puts (SpeedString, &Font_7x10, 1);
 
 	     SSD1306_GotoXY (0, 30);
 	     SSD1306_Puts ("DYS:", &Font_7x10, 1);
-	     SSD1306_GotoXY (35,30);// przejdź do następnej linii
-	     SSD1306_Puts (total_distance_string, &Font_7x10, 1); // wypisz liczbę satelitów
+	     SSD1306_GotoXY (35,30);
+	     SSD1306_Puts (total_distance_string, &Font_7x10, 1);
 
 	     SSD1306_GotoXY (0, 40);
 	   	 SSD1306_Puts ("Lat:", &Font_7x10, 1);
-	     SSD1306_GotoXY (35,40);  // przejdź do pozycji 0,0
-	     SSD1306_Puts (LatitudeString, &Font_7x10, 1); // wypisz szerokość geograficzną
+	     SSD1306_GotoXY (35,40);
+	     SSD1306_Puts (LatitudeString, &Font_7x10, 1);
 
 	     SSD1306_GotoXY (0, 50);
 	   	 SSD1306_Puts ("Lon:", &Font_7x10, 1);
-	     SSD1306_GotoXY (35,50); // przejdź do następnej linii
-	     SSD1306_Puts (LongitudeString, &Font_7x10, 1); // wypisz długość geograficzną
+	     SSD1306_GotoXY (35,50);
+	     SSD1306_Puts (LongitudeString, &Font_7x10, 1);
 
 
 	     SSD1306_GotoXY (85, 0);
 	     SSD1306_Puts ("S:", &Font_7x10, 1);
-	     SSD1306_GotoXY (100,0);// przejdź do następnej linii
-	     SSD1306_Puts (SatelitesNumberString, &Font_7x10, 1); // wypisz liczbę satelitów
+	     SSD1306_GotoXY (100,0);
+	     SSD1306_Puts (SatelitesNumberString, &Font_7x10, 1);
 
-	     SSD1306_UpdateScreen(); // aktualizuj ekran
+	     SSD1306_UpdateScreen();
 	     OLED_delay = HAL_GetTick();
 	   }
 

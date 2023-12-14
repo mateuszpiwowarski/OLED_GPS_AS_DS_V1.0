@@ -21,31 +21,31 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, DATA
   8 .data         000001f0  20000000  0800d9d0  00020000  2**3
                   CONTENTS, ALLOC, LOAD, DATA
-  9 .bss          00000ad8  200001f0  0800dbc0  000201f0  2**3
+  9 .bss          000009e8  200001f0  0800dbc0  000201f0  2**3
                   ALLOC
- 10 ._user_heap_stack 00000600  20000cc8  0800dbc0  00020cc8  2**0
+ 10 ._user_heap_stack 00000600  20000bd8  0800dbc0  00020bd8  2**0
                   ALLOC
  11 .ARM.attributes 00000029  00000000  00000000  000201f0  2**0
                   CONTENTS, READONLY
  12 .comment      00000043  00000000  00000000  00020219  2**0
                   CONTENTS, READONLY
- 13 .debug_info   000140ea  00000000  00000000  0002025c  2**0
+ 13 .debug_info   000140fa  00000000  00000000  0002025c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_abbrev 000038cd  00000000  00000000  00034346  2**0
+ 14 .debug_abbrev 000038cd  00000000  00000000  00034356  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_aranges 000013e8  00000000  00000000  00037c18  2**3
+ 15 .debug_aranges 000013e8  00000000  00000000  00037c28  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_rnglists 00000f80  00000000  00000000  00039000  2**0
+ 16 .debug_rnglists 00000f80  00000000  00000000  00039010  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_macro  0001af80  00000000  00000000  00039f80  2**0
+ 17 .debug_macro  0001af80  00000000  00000000  00039f90  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_line   00019cb0  00000000  00000000  00054f00  2**0
+ 18 .debug_line   00019cb0  00000000  00000000  00054f10  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    000950b8  00000000  00000000  0006ebb0  2**0
+ 19 .debug_str    000950b8  00000000  00000000  0006ebc0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .debug_frame  00006b0c  00000000  00000000  00103c68  2**2
+ 20 .debug_frame  00006b0c  00000000  00000000  00103c78  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000062  00000000  00000000  0010a774  2**0
+ 21 .debug_line_str 00000062  00000000  00000000  0010a784  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -4372,7 +4372,7 @@ int main(void)
   while (1)
   {
 
-	 if((HAL_GetTick() - DS18B20_delay) > 1000) // Odświeżaj temperaturę co sekundę (1000 ms)
+	 if((HAL_GetTick() - DS18B20_delay) > 1000)
  80024b6:	f001 fa5b 	bl	8003970 <HAL_GetTick>
  80024ba:	4602      	mov	r2, r0
  80024bc:	69fb      	ldr	r3, [r7, #28]
@@ -4386,7 +4386,7 @@ int main(void)
  80024ca:	f7fe fe8d 	bl	80011e8 <DS18B20_StartAll>
 
 		 uint8_t ROM_tmp[8];
-		 uint8_t i;
+		 uint8_t i;		//Iterator
 
 	    for(i = 0; i < DS18B20_Quantity(); i++)
  80024ce:	2300      	movs	r3, #0
@@ -4394,7 +4394,7 @@ int main(void)
  80024d2:	e028      	b.n	8002526 <main+0xc6>
  80024d4:	2000020c 	.word	0x2000020c
  80024d8:	40010800 	.word	0x40010800
- 80024dc:	20000b30 	.word	0x20000b30
+ 80024dc:	20000a40 	.word	0x20000a40
  80024e0:	20000300 	.word	0x20000300
 	    {
 	       if(DS18B20_GetTemperature(i, &temperature))
@@ -4413,7 +4413,7 @@ int main(void)
  80024fa:	4618      	mov	r0, r3
  80024fc:	f7ff f83a 	bl	8001574 <DS18B20_GetROM>
 		   	memset(temp_string, 0, sizeof(temp_string));
- 8002500:	2240      	movs	r2, #64	; 0x40
+ 8002500:	2210      	movs	r2, #16
  8002502:	2100      	movs	r1, #0
  8002504:	48ad      	ldr	r0, [pc, #692]	; (80027bc <main+0x35c>)
  8002506:	f006 f9d2 	bl	80088ae <memset>
@@ -4450,7 +4450,7 @@ int main(void)
 	 }
 
 
-	  if((HAL_GetTick() - ADC_delay) > 250) // Odświeżaj odczyt ADC co 250 ms
+	  if((HAL_GetTick() - ADC_delay) > 250)
  8002544:	f001 fa14 	bl	8003970 <HAL_GetTick>
  8002548:	4602      	mov	r2, r0
  800254a:	697b      	ldr	r3, [r7, #20]
@@ -4540,7 +4540,7 @@ int main(void)
 	  }
 
 
-	  if((HAL_GetTick() - NEO6_delay) > 100) // Odświeżaj odczyt GPS co sekundę (1000 ms)
+	  if((HAL_GetTick() - NEO6_delay) > 100)
  800260a:	f001 f9b1 	bl	8003970 <HAL_GetTick>
  800260e:	4602      	mov	r2, r0
  8002610:	69bb      	ldr	r3, [r7, #24]
@@ -4625,7 +4625,7 @@ int main(void)
  80026ca:	e9c1 2300 	strd	r2, r3, [r1]
 	  }
 
-	     // ... the rest of your GPS processing code here ...
+
 	  	sprintf(total_distance_string, "%.2f km", GpsState.total_distance); // write into the string the total distance with 2 decimal precision
  80026ce:	4b46      	ldr	r3, [pc, #280]	; (80027e8 <main+0x388>)
  80026d0:	e9d3 2372 	ldrd	r2, r3, [r3, #456]	; 0x1c8
@@ -4665,7 +4665,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	  if((HAL_GetTick() - OLED_delay) > 250) // Aktualizuj wyświetlacz co 250 ms
+	  if((HAL_GetTick() - OLED_delay) > 250)
  800271c:	f001 f928 	bl	8003970 <HAL_GetTick>
  8002720:	4602      	mov	r2, r0
  8002722:	693b      	ldr	r3, [r7, #16]
@@ -4682,11 +4682,11 @@ int main(void)
  8002736:	493a      	ldr	r1, [pc, #232]	; (8002820 <main+0x3c0>)
  8002738:	483a      	ldr	r0, [pc, #232]	; (8002824 <main+0x3c4>)
  800273a:	f000 fdc7 	bl	80032cc <SSD1306_Puts>
-	     SSD1306_GotoXY (28,0);  // przejdź do pozycji 0,0
+	     SSD1306_GotoXY (28,0);
  800273e:	2100      	movs	r1, #0
  8002740:	201c      	movs	r0, #28
  8002742:	f000 fd2d 	bl	80031a0 <SSD1306_GotoXY>
-	     SSD1306_Puts (temp_string, &Font_7x10, 1); // wypisz temperaturę
+	     SSD1306_Puts (temp_string, &Font_7x10, 1);
  8002746:	2201      	movs	r2, #1
  8002748:	4935      	ldr	r1, [pc, #212]	; (8002820 <main+0x3c0>)
  800274a:	481c      	ldr	r0, [pc, #112]	; (80027bc <main+0x35c>)
@@ -4701,11 +4701,11 @@ int main(void)
  800275a:	4931      	ldr	r1, [pc, #196]	; (8002820 <main+0x3c0>)
  800275c:	4832      	ldr	r0, [pc, #200]	; (8002828 <main+0x3c8>)
  800275e:	f000 fdb5 	bl	80032cc <SSD1306_Puts>
-	     SSD1306_GotoXY (40,10); // przejdź do następnej linii
+	     SSD1306_GotoXY (40,10);
  8002762:	210a      	movs	r1, #10
  8002764:	2028      	movs	r0, #40	; 0x28
  8002766:	f000 fd1b 	bl	80031a0 <SSD1306_GotoXY>
-	     SSD1306_Puts (current_string, &Font_7x10, 1); // wypisz prąd
+	     SSD1306_Puts (current_string, &Font_7x10, 1);
  800276a:	2201      	movs	r2, #1
  800276c:	492c      	ldr	r1, [pc, #176]	; (8002820 <main+0x3c0>)
  800276e:	481d      	ldr	r0, [pc, #116]	; (80027e4 <main+0x384>)
@@ -4721,11 +4721,11 @@ int main(void)
  800277e:	4928      	ldr	r1, [pc, #160]	; (8002820 <main+0x3c0>)
  8002780:	482a      	ldr	r0, [pc, #168]	; (800282c <main+0x3cc>)
  8002782:	f000 fda3 	bl	80032cc <SSD1306_Puts>
-	     SSD1306_GotoXY (40,20);// przejdź do następnej linii
+	     SSD1306_GotoXY (40,20);
  8002786:	2114      	movs	r1, #20
  8002788:	2028      	movs	r0, #40	; 0x28
  800278a:	f000 fd09 	bl	80031a0 <SSD1306_GotoXY>
-	     SSD1306_Puts (SpeedString, &Font_7x10, 1); // wypisz prędkość
+	     SSD1306_Puts (SpeedString, &Font_7x10, 1);
  800278e:	2201      	movs	r2, #1
  8002790:	4923      	ldr	r1, [pc, #140]	; (8002820 <main+0x3c0>)
  8002792:	4820      	ldr	r0, [pc, #128]	; (8002814 <main+0x3b4>)
@@ -4743,32 +4743,32 @@ int main(void)
  80027ac:	400a6666 	.word	0x400a6666
  80027b0:	00000000 	.word	0x00000000
  80027b4:	40adfc00 	.word	0x40adfc00
- 80027b8:	20000698 	.word	0x20000698
- 80027bc:	2000069c 	.word	0x2000069c
+ 80027b8:	200005d8 	.word	0x200005d8
+ 80027bc:	200005dc 	.word	0x200005dc
  80027c0:	0800cb4c 	.word	0x0800cb4c
  80027c4:	40011000 	.word	0x40011000
  80027c8:	2000020c 	.word	0x2000020c
- 80027cc:	20000600 	.word	0x20000600
- 80027d0:	20000604 	.word	0x20000604
+ 80027cc:	20000580 	.word	0x20000580
+ 80027d0:	20000584 	.word	0x20000584
  80027d4:	40040000 	.word	0x40040000
  80027d8:	20000008 	.word	0x20000008
- 80027dc:	20000608 	.word	0x20000608
+ 80027dc:	20000588 	.word	0x20000588
  80027e0:	0800cb54 	.word	0x0800cb54
- 80027e4:	2000060c 	.word	0x2000060c
+ 80027e4:	2000058c 	.word	0x2000058c
  80027e8:	20000300 	.word	0x20000300
  80027ec:	3ff80000 	.word	0x3ff80000
  80027f0:	200002f0 	.word	0x200002f0
  80027f4:	200002f8 	.word	0x200002f8
- 80027f8:	20000690 	.word	0x20000690
+ 80027f8:	200005d0 	.word	0x200005d0
  80027fc:	0800cb5c 	.word	0x0800cb5c
- 8002800:	2000064c 	.word	0x2000064c
+ 8002800:	200005ac 	.word	0x200005ac
  8002804:	0800cb64 	.word	0x0800cb64
  8002808:	20000500 	.word	0x20000500
- 800280c:	20000540 	.word	0x20000540
+ 800280c:	20000520 	.word	0x20000520
  8002810:	0800cb68 	.word	0x0800cb68
- 8002814:	20000580 	.word	0x20000580
+ 8002814:	20000540 	.word	0x20000540
  8002818:	0800cb74 	.word	0x0800cb74
- 800281c:	200005c0 	.word	0x200005c0
+ 800281c:	20000560 	.word	0x20000560
  8002820:	20000000 	.word	0x20000000
  8002824:	0800cb78 	.word	0x0800cb78
  8002828:	0800cb80 	.word	0x0800cb80
@@ -4776,11 +4776,11 @@ int main(void)
  8002830:	4924      	ldr	r1, [pc, #144]	; (80028c4 <main+0x464>)
  8002832:	4825      	ldr	r0, [pc, #148]	; (80028c8 <main+0x468>)
  8002834:	f000 fd4a 	bl	80032cc <SSD1306_Puts>
-	     SSD1306_GotoXY (35,30);// przejdź do następnej linii
+	     SSD1306_GotoXY (35,30);
  8002838:	211e      	movs	r1, #30
  800283a:	2023      	movs	r0, #35	; 0x23
  800283c:	f000 fcb0 	bl	80031a0 <SSD1306_GotoXY>
-	     SSD1306_Puts (total_distance_string, &Font_7x10, 1); // wypisz liczbę satelitów
+	     SSD1306_Puts (total_distance_string, &Font_7x10, 1);
  8002840:	2201      	movs	r2, #1
  8002842:	4920      	ldr	r1, [pc, #128]	; (80028c4 <main+0x464>)
  8002844:	4821      	ldr	r0, [pc, #132]	; (80028cc <main+0x46c>)
@@ -4795,11 +4795,11 @@ int main(void)
  8002854:	491b      	ldr	r1, [pc, #108]	; (80028c4 <main+0x464>)
  8002856:	481e      	ldr	r0, [pc, #120]	; (80028d0 <main+0x470>)
  8002858:	f000 fd38 	bl	80032cc <SSD1306_Puts>
-	     SSD1306_GotoXY (35,40);  // przejdź do pozycji 0,0
+	     SSD1306_GotoXY (35,40);
  800285c:	2128      	movs	r1, #40	; 0x28
  800285e:	2023      	movs	r0, #35	; 0x23
  8002860:	f000 fc9e 	bl	80031a0 <SSD1306_GotoXY>
-	     SSD1306_Puts (LatitudeString, &Font_7x10, 1); // wypisz szerokość geograficzną
+	     SSD1306_Puts (LatitudeString, &Font_7x10, 1);
  8002864:	2201      	movs	r2, #1
  8002866:	4917      	ldr	r1, [pc, #92]	; (80028c4 <main+0x464>)
  8002868:	481a      	ldr	r0, [pc, #104]	; (80028d4 <main+0x474>)
@@ -4814,11 +4814,11 @@ int main(void)
  8002878:	4912      	ldr	r1, [pc, #72]	; (80028c4 <main+0x464>)
  800287a:	4817      	ldr	r0, [pc, #92]	; (80028d8 <main+0x478>)
  800287c:	f000 fd26 	bl	80032cc <SSD1306_Puts>
-	     SSD1306_GotoXY (35,50); // przejdź do następnej linii
+	     SSD1306_GotoXY (35,50);
  8002880:	2132      	movs	r1, #50	; 0x32
  8002882:	2023      	movs	r0, #35	; 0x23
  8002884:	f000 fc8c 	bl	80031a0 <SSD1306_GotoXY>
-	     SSD1306_Puts (LongitudeString, &Font_7x10, 1); // wypisz długość geograficzną
+	     SSD1306_Puts (LongitudeString, &Font_7x10, 1);
  8002888:	2201      	movs	r2, #1
  800288a:	490e      	ldr	r1, [pc, #56]	; (80028c4 <main+0x464>)
  800288c:	4813      	ldr	r0, [pc, #76]	; (80028dc <main+0x47c>)
@@ -4834,33 +4834,33 @@ int main(void)
  800289c:	4909      	ldr	r1, [pc, #36]	; (80028c4 <main+0x464>)
  800289e:	4810      	ldr	r0, [pc, #64]	; (80028e0 <main+0x480>)
  80028a0:	f000 fd14 	bl	80032cc <SSD1306_Puts>
-	     SSD1306_GotoXY (100,0);// przejdź do następnej linii
+	     SSD1306_GotoXY (100,0);
  80028a4:	2100      	movs	r1, #0
  80028a6:	2064      	movs	r0, #100	; 0x64
  80028a8:	f000 fc7a 	bl	80031a0 <SSD1306_GotoXY>
-	     SSD1306_Puts (SatelitesNumberString, &Font_7x10, 1); // wypisz liczbę satelitów
+	     SSD1306_Puts (SatelitesNumberString, &Font_7x10, 1);
  80028ac:	2201      	movs	r2, #1
  80028ae:	4905      	ldr	r1, [pc, #20]	; (80028c4 <main+0x464>)
  80028b0:	480c      	ldr	r0, [pc, #48]	; (80028e4 <main+0x484>)
  80028b2:	f000 fd0b 	bl	80032cc <SSD1306_Puts>
 
-	     SSD1306_UpdateScreen(); // aktualizuj ekran
+	     SSD1306_UpdateScreen();
  80028b6:	f000 fbcf 	bl	8003058 <SSD1306_UpdateScreen>
 	     OLED_delay = HAL_GetTick();
  80028ba:	f001 f859 	bl	8003970 <HAL_GetTick>
  80028be:	6138      	str	r0, [r7, #16]
-	 if((HAL_GetTick() - DS18B20_delay) > 1000) // Odświeżaj temperaturę co sekundę (1000 ms)
+	 if((HAL_GetTick() - DS18B20_delay) > 1000)
  80028c0:	e5f9      	b.n	80024b6 <main+0x56>
  80028c2:	bf00      	nop
  80028c4:	20000000 	.word	0x20000000
  80028c8:	0800cb90 	.word	0x0800cb90
- 80028cc:	2000064c 	.word	0x2000064c
+ 80028cc:	200005ac 	.word	0x200005ac
  80028d0:	0800cb98 	.word	0x0800cb98
  80028d4:	20000500 	.word	0x20000500
  80028d8:	0800cba0 	.word	0x0800cba0
- 80028dc:	20000540 	.word	0x20000540
+ 80028dc:	20000520 	.word	0x20000520
  80028e0:	0800cba8 	.word	0x0800cba8
- 80028e4:	200005c0 	.word	0x200005c0
+ 80028e4:	20000560 	.word	0x20000560
 
 080028e8 <SystemClock_Config>:
 /**
@@ -5071,7 +5071,7 @@ void OneWire_Delay(uint16_t us)
  80029f6:	46bd      	mov	sp, r7
  80029f8:	bc80      	pop	{r7}
  80029fa:	4770      	bx	lr
- 80029fc:	20000ae8 	.word	0x20000ae8
+ 80029fc:	200009f8 	.word	0x200009f8
 
 08002a00 <OneWire_BusInputDirection>:
 
@@ -5980,7 +5980,7 @@ void OneWire_Init(OneWire_t* onewire, GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
  8002ec6:	46bd      	mov	sp, r7
  8002ec8:	bd80      	pop	{r7, pc}
  8002eca:	bf00      	nop
- 8002ecc:	20000ae8 	.word	0x20000ae8
+ 8002ecc:	200009f8 	.word	0x200009f8
 
 08002ed0 <SSD1306_Init>:
 
@@ -6212,7 +6212,7 @@ uint8_t SSD1306_Init(void) {
  800304c:	bd80      	pop	{r7, pc}
  800304e:	bf00      	nop
  8003050:	20000298 	.word	0x20000298
- 8003054:	20000adc 	.word	0x20000adc
+ 8003054:	200009ec 	.word	0x200009ec
 
 08003058 <SSD1306_UpdateScreen>:
 
@@ -6269,7 +6269,7 @@ void SSD1306_UpdateScreen(void) {
  80030aa:	3708      	adds	r7, #8
  80030ac:	46bd      	mov	sp, r7
  80030ae:	bd80      	pop	{r7, pc}
- 80030b0:	200006dc 	.word	0x200006dc
+ 80030b0:	200005ec 	.word	0x200005ec
 
 080030b4 <SSD1306_Fill>:
 	for (i = 0; i < sizeof(SSD1306_Buffer); i++) {
@@ -6301,7 +6301,7 @@ void SSD1306_Fill(SSD1306_COLOR_t color) {
  80030da:	46bd      	mov	sp, r7
  80030dc:	bd80      	pop	{r7, pc}
  80030de:	bf00      	nop
- 80030e0:	200006dc 	.word	0x200006dc
+ 80030e0:	200005ec 	.word	0x200005ec
 
 080030e4 <SSD1306_DrawPixel>:
 
@@ -6411,8 +6411,8 @@ void SSD1306_DrawPixel(uint16_t x, uint16_t y, SSD1306_COLOR_t color) {
  8003192:	46bd      	mov	sp, r7
  8003194:	bc80      	pop	{r7}
  8003196:	4770      	bx	lr
- 8003198:	20000adc 	.word	0x20000adc
- 800319c:	200006dc 	.word	0x200006dc
+ 8003198:	200009ec 	.word	0x200009ec
+ 800319c:	200005ec 	.word	0x200005ec
 
 080031a0 <SSD1306_GotoXY>:
 
@@ -6441,7 +6441,7 @@ void SSD1306_GotoXY(uint16_t x, uint16_t y) {
  80031c2:	bc80      	pop	{r7}
  80031c4:	4770      	bx	lr
  80031c6:	bf00      	nop
- 80031c8:	20000adc 	.word	0x20000adc
+ 80031c8:	200009ec 	.word	0x200009ec
 
 080031cc <SSD1306_Putc>:
 
@@ -6600,7 +6600,7 @@ char SSD1306_Putc(char ch, FontDef_t* Font, SSD1306_COLOR_t color) {
  80032c2:	46bd      	mov	sp, r7
  80032c4:	bd80      	pop	{r7, pc}
  80032c6:	bf00      	nop
- 80032c8:	20000adc 	.word	0x20000adc
+ 80032c8:	200009ec 	.word	0x200009ec
 
 080032cc <SSD1306_Puts>:
 
@@ -7063,7 +7063,7 @@ void USART1_IRQHandler(void)
  8003506:	bf00      	nop
  8003508:	bd80      	pop	{r7, pc}
  800350a:	bf00      	nop
- 800350c:	20000b30 	.word	0x20000b30
+ 800350c:	20000a40 	.word	0x20000a40
 
 08003510 <_getpid>:
 void initialise_monitor_handles()
@@ -7368,8 +7368,8 @@ void *_sbrk(ptrdiff_t incr)
  800367e:	bd80      	pop	{r7, pc}
  8003680:	20005000 	.word	0x20005000
  8003684:	00000400 	.word	0x00000400
- 8003688:	20000ae4 	.word	0x20000ae4
- 800368c:	20000cc8 	.word	0x20000cc8
+ 8003688:	200009f4 	.word	0x200009f4
+ 800368c:	20000bd8 	.word	0x20000bd8
 
 08003690 <SystemInit>:
   * @note   This function should be used only after reset.
@@ -7502,7 +7502,7 @@ void MX_TIM1_Init(void)
  800372e:	3718      	adds	r7, #24
  8003730:	46bd      	mov	sp, r7
  8003732:	bd80      	pop	{r7, pc}
- 8003734:	20000ae8 	.word	0x20000ae8
+ 8003734:	200009f8 	.word	0x200009f8
  8003738:	40012c00 	.word	0x40012c00
 
 0800373c <HAL_TIM_Base_MspInit>:
@@ -7613,7 +7613,7 @@ void MX_USART1_UART_Init(void)
  80037be:	bf00      	nop
  80037c0:	bd80      	pop	{r7, pc}
  80037c2:	bf00      	nop
- 80037c4:	20000b30 	.word	0x20000b30
+ 80037c4:	20000a40 	.word	0x20000a40
  80037c8:	40013800 	.word	0x40013800
 
 080037cc <HAL_UART_MspInit>:
@@ -7806,7 +7806,7 @@ LoopFillZerobss:
   ldr r2, =_sbss
  80038b4:	200001f0 	.word	0x200001f0
   ldr r4, =_ebss
- 80038b8:	20000cc8 	.word	0x20000cc8
+ 80038b8:	20000bd8 	.word	0x20000bd8
 
 080038bc <ADC1_2_IRQHandler>:
  * @retval : None
@@ -7954,7 +7954,7 @@ __weak void HAL_IncTick(void)
  8003964:	bc80      	pop	{r7}
  8003966:	4770      	bx	lr
  8003968:	20000014 	.word	0x20000014
- 800396c:	20000b78 	.word	0x20000b78
+ 800396c:	20000a88 	.word	0x20000a88
 
 08003970 <HAL_GetTick>:
   * @note  This function is declared as __weak to be overwritten in case of other
@@ -7973,7 +7973,7 @@ __weak uint32_t HAL_GetTick(void)
  800397a:	46bd      	mov	sp, r7
  800397c:	bc80      	pop	{r7}
  800397e:	4770      	bx	lr
- 8003980:	20000b78 	.word	0x20000b78
+ 8003980:	20000a88 	.word	0x20000a88
 
 08003984 <HAL_Delay>:
   *       implementations in user file.
@@ -19832,7 +19832,7 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  80086c0:	0800884b 	.word	0x0800884b
  80086c4:	08008883 	.word	0x08008883
  80086c8:	080088a7 	.word	0x080088a7
- 80086cc:	20000b7c 	.word	0x20000b7c
+ 80086cc:	20000a8c 	.word	0x20000a8c
 
 080086d0 <stdio_exit_handler>:
  80086d0:	4a02      	ldr	r2, [pc, #8]	; (80086dc <stdio_exit_handler+0xc>)
@@ -19867,9 +19867,9 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  8008714:	f002 baf4 	b.w	800ad00 <_fflush_r>
  8008718:	bd10      	pop	{r4, pc}
  800871a:	bf00      	nop
- 800871c:	20000b7c 	.word	0x20000b7c
- 8008720:	20000be4 	.word	0x20000be4
- 8008724:	20000c4c 	.word	0x20000c4c
+ 800871c:	20000a8c 	.word	0x20000a8c
+ 8008720:	20000af4 	.word	0x20000af4
+ 8008724:	20000b5c 	.word	0x20000b5c
 
 08008728 <global_stdio_init.part.0>:
  8008728:	b510      	push	{r4, lr}
@@ -19890,21 +19890,21 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  800874e:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
  8008752:	2112      	movs	r1, #18
  8008754:	f7ff bf86 	b.w	8008664 <std>
- 8008758:	20000cb4 	.word	0x20000cb4
- 800875c:	20000b7c 	.word	0x20000b7c
+ 8008758:	20000bc4 	.word	0x20000bc4
+ 800875c:	20000a8c 	.word	0x20000a8c
  8008760:	080086d1 	.word	0x080086d1
 
 08008764 <__sfp_lock_acquire>:
  8008764:	4801      	ldr	r0, [pc, #4]	; (800876c <__sfp_lock_acquire+0x8>)
  8008766:	f000 b94a 	b.w	80089fe <__retarget_lock_acquire_recursive>
  800876a:	bf00      	nop
- 800876c:	20000cbd 	.word	0x20000cbd
+ 800876c:	20000bcd 	.word	0x20000bcd
 
 08008770 <__sfp_lock_release>:
  8008770:	4801      	ldr	r0, [pc, #4]	; (8008778 <__sfp_lock_release+0x8>)
  8008772:	f000 b945 	b.w	8008a00 <__retarget_lock_release_recursive>
  8008776:	bf00      	nop
- 8008778:	20000cbd 	.word	0x20000cbd
+ 8008778:	20000bcd 	.word	0x20000bcd
 
 0800877c <__sinit>:
  800877c:	b510      	push	{r4, lr}
@@ -19924,7 +19924,7 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  80087a0:	e7f2      	b.n	8008788 <__sinit+0xc>
  80087a2:	bf00      	nop
  80087a4:	080086e9 	.word	0x080086e9
- 80087a8:	20000cb4 	.word	0x20000cb4
+ 80087a8:	20000bc4 	.word	0x20000bc4
 
 080087ac <_fwalk_sglue>:
  80087ac:	e92d 43f8 	stmdb	sp!, {r3, r4, r5, r6, r7, r8, r9, lr}
@@ -20111,7 +20111,7 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  8008932:	b103      	cbz	r3, 8008936 <_close_r+0x1a>
  8008934:	6023      	str	r3, [r4, #0]
  8008936:	bd38      	pop	{r3, r4, r5, pc}
- 8008938:	20000cb8 	.word	0x20000cb8
+ 8008938:	20000bc8 	.word	0x20000bc8
 
 0800893c <_lseek_r>:
  800893c:	b538      	push	{r3, r4, r5, lr}
@@ -20129,7 +20129,7 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  8008956:	b103      	cbz	r3, 800895a <_lseek_r+0x1e>
  8008958:	6023      	str	r3, [r4, #0]
  800895a:	bd38      	pop	{r3, r4, r5, pc}
- 800895c:	20000cb8 	.word	0x20000cb8
+ 800895c:	20000bc8 	.word	0x20000bc8
 
 08008960 <_read_r>:
  8008960:	b538      	push	{r3, r4, r5, lr}
@@ -20147,7 +20147,7 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  800897a:	b103      	cbz	r3, 800897e <_read_r+0x1e>
  800897c:	6023      	str	r3, [r4, #0]
  800897e:	bd38      	pop	{r3, r4, r5, pc}
- 8008980:	20000cb8 	.word	0x20000cb8
+ 8008980:	20000bc8 	.word	0x20000bc8
 
 08008984 <_write_r>:
  8008984:	b538      	push	{r3, r4, r5, lr}
@@ -20165,7 +20165,7 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  800899e:	b103      	cbz	r3, 80089a2 <_write_r+0x1e>
  80089a0:	6023      	str	r3, [r4, #0]
  80089a2:	bd38      	pop	{r3, r4, r5, pc}
- 80089a4:	20000cb8 	.word	0x20000cb8
+ 80089a4:	20000bc8 	.word	0x20000bc8
 
 080089a8 <__errno>:
  80089a8:	4b01      	ldr	r3, [pc, #4]	; (80089b0 <__errno+0x8>)
@@ -21588,7 +21588,7 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  80097ae:	6054      	str	r4, [r2, #4]
  80097b0:	e7cb      	b.n	800974a <_free_r+0x22>
  80097b2:	bd38      	pop	{r3, r4, r5, pc}
- 80097b4:	20000cc0 	.word	0x20000cc0
+ 80097b4:	20000bd0 	.word	0x20000bd0
 
 080097b8 <rshift>:
  80097b8:	6903      	ldr	r3, [r0, #16]
@@ -22310,7 +22310,7 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  8009eb0:	f04f 34ff 	mov.w	r4, #4294967295
  8009eb4:	4620      	mov	r0, r4
  8009eb6:	bd70      	pop	{r4, r5, r6, pc}
- 8009eb8:	20000cc4 	.word	0x20000cc4
+ 8009eb8:	20000bd4 	.word	0x20000bd4
 
 08009ebc <_malloc_r>:
  8009ebc:	e92d 43f8 	stmdb	sp!, {r3, r4, r5, r6, r7, r8, r9, lr}
@@ -22421,7 +22421,7 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  8009fb2:	605b      	str	r3, [r3, #4]
  8009fb4:	deff      	udf	#255	; 0xff
  8009fb6:	bf00      	nop
- 8009fb8:	20000cc0 	.word	0x20000cc0
+ 8009fb8:	20000bd0 	.word	0x20000bd0
 
 08009fbc <__ascii_mbtowc>:
  8009fbc:	b082      	sub	sp, #8
@@ -22446,13 +22446,13 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  8009fe0:	4801      	ldr	r0, [pc, #4]	; (8009fe8 <__malloc_lock+0x8>)
  8009fe2:	f7fe bd0c 	b.w	80089fe <__retarget_lock_acquire_recursive>
  8009fe6:	bf00      	nop
- 8009fe8:	20000cbc 	.word	0x20000cbc
+ 8009fe8:	20000bcc 	.word	0x20000bcc
 
 08009fec <__malloc_unlock>:
  8009fec:	4801      	ldr	r0, [pc, #4]	; (8009ff4 <__malloc_unlock+0x8>)
  8009fee:	f7fe bd07 	b.w	8008a00 <__retarget_lock_release_recursive>
  8009ff2:	bf00      	nop
- 8009ff4:	20000cbc 	.word	0x20000cbc
+ 8009ff4:	20000bcc 	.word	0x20000bcc
 
 08009ff8 <_Balloc>:
  8009ff8:	b570      	push	{r4, r5, r6, lr}
@@ -23884,7 +23884,7 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  800ad9a:	b103      	cbz	r3, 800ad9e <_sbrk_r+0x1a>
  800ad9c:	6023      	str	r3, [r4, #0]
  800ad9e:	bd38      	pop	{r3, r4, r5, pc}
- 800ada0:	20000cb8 	.word	0x20000cb8
+ 800ada0:	20000bc8 	.word	0x20000bc8
 
 0800ada4 <__assert_func>:
  800ada4:	b51f      	push	{r0, r1, r2, r3, r4, lr}
@@ -24467,7 +24467,7 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  800b2d2:	6023      	str	r3, [r4, #0]
  800b2d4:	bd38      	pop	{r3, r4, r5, pc}
  800b2d6:	bf00      	nop
- 800b2d8:	20000cb8 	.word	0x20000cb8
+ 800b2d8:	20000bc8 	.word	0x20000bc8
 
 0800b2dc <_getpid_r>:
  800b2dc:	f7f8 b918 	b.w	8003510 <_getpid>
@@ -24572,7 +24572,7 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  800b3be:	6023      	str	r3, [r4, #0]
  800b3c0:	bd38      	pop	{r3, r4, r5, pc}
  800b3c2:	bf00      	nop
- 800b3c4:	20000cb8 	.word	0x20000cb8
+ 800b3c4:	20000bc8 	.word	0x20000bc8
 
 0800b3c8 <_isatty_r>:
  800b3c8:	b538      	push	{r3, r4, r5, lr}
@@ -24588,7 +24588,7 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  800b3de:	b103      	cbz	r3, 800b3e2 <_isatty_r+0x1a>
  800b3e0:	6023      	str	r3, [r4, #0]
  800b3e2:	bd38      	pop	{r3, r4, r5, pc}
- 800b3e4:	20000cb8 	.word	0x20000cb8
+ 800b3e4:	20000bc8 	.word	0x20000bc8
 
 0800b3e8 <atan2>:
  800b3e8:	f000 bb02 	b.w	800b9f0 <__ieee754_atan2>
