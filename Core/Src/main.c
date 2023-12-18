@@ -73,9 +73,9 @@ typedef enum {
 #define BUTTON_DEBOUNCE_DELAY 200
 
 volatile PAGE currentPage = PAGE_ONE;
-volatile uint8_t buttonPressed = 0;
-volatile uint16_t lastButtonPressTime = 0;
-volatile uint8_t buttonState = 0;
+volatile uint32_t buttonPressed = 0;
+volatile uint32_t lastButtonPressTime = 0;
+volatile uint32_t buttonState = 0;
 
 #define MIN_SPEED_KM 1.5    // Minimum speed (in km/h) to consider that the GPS is moving
 #define GPS_EARTH_RADIUS_KM          6371.0 // Earth's radius in kilometers
@@ -198,7 +198,6 @@ int main(void)
   uint32_t NEO6_delay = 0;
   uint32_t ADC_delay = 0;
   uint32_t updateScreenTime = 0;
-  uint32_t buttonPressTime = 0;
   uint32_t HAL_GPIO_TogglePin_delay = 0;
   /* USER CODE END 2 */
 
@@ -209,7 +208,7 @@ int main(void)
 
 
 //////////////////////////////////////////////////////////////////////////////////////
-//							      DS18B20_Temperature_Detection
+//			DS18B20_Temperature_Detection
 
 	 if((HAL_GetTick() - DS18B20_delay) > 250)
 	 {
@@ -241,23 +240,23 @@ int main(void)
 
 
 //////////////////////////////////////////////////////////////////////////////
-//					Measuring_Current
+//			Measuring_Current
 
 	  if((HAL_GetTick() - ADC_delay) > 250)
 	   {
 		  HAL_ADC_PollForConversion(&hadc1,1000);
 		  readValue = HAL_ADC_GetValue(&hadc1);
-		  rawVoltage = (float) readValue * 3.300 / 4105;
-		  current =(rawVoltage - 2.500)/sensitivity;
+		  rawVoltage = (float) readValue * 3.3 / 4105;
+		  current =(rawVoltage - 2.5)/sensitivity;
 		  sprintf(current_string,"%.2f A ", current);
 
 		  ADC_delay = HAL_GetTick();
 	   }
 
 ///////////////////////////////////////////////////////////////////////////////
-// 					GPS_Update_Function
+// 			GPS_Update_Function
 
-	  if((HAL_GetTick() - NEO6_delay) > 500)
+	  if((HAL_GetTick() - NEO6_delay) > 100)
 	  {
 	  NEO6_Task(&GpsState);
 
@@ -284,10 +283,8 @@ int main(void)
 	  }
 
 /////////////////////////////////////////////////////////////////////////////////
-//    					Handle_Button_Update_Displayed_Pages
+//    		Handle_Button_Update_Displayed_Pages
 
-	  if(HAL_GetTick() - buttonPressTime >= 200)
-	   {
 		  if(buttonPressed)
 		   {
 			  buttonPressed = 0;
@@ -298,11 +295,9 @@ int main(void)
 	         displayPage(currentPage);
 		   }
 		 SSD1306_UpdateScreen();
-	     buttonPressTime = HAL_GetTick();
-	   }
 
 ///////////////////////////////////////////////////////////////////////////////////
-//						Update_Information_OnThe_Current_Page
+//			Update_Information_OnThe_Current_Page
 
 	  if(HAL_GetTick() - updateScreenTime >= 250)
 	      {
