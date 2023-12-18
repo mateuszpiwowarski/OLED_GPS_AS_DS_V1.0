@@ -63,6 +63,9 @@ void Error_Handler(void);
 #define TEST_Pin_GPIO_Port GPIOA
 #define DS18B20_Pin_Pin GPIO_PIN_1
 #define DS18B20_Pin_GPIO_Port GPIOA
+#define P1_Pin GPIO_PIN_3
+#define P1_GPIO_Port GPIOB
+#define P1_EXTI_IRQn EXTI3_IRQn
 
 /* USER CODE BEGIN Private defines */
 

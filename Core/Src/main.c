@@ -60,11 +60,22 @@ extern TIM_HandleTypeDef htim1;
 
 /* Private variables ---------------------------------------------------------*/
 
-extern ADC_HandleTypeDef hadc1;
-
 /* USER CODE BEGIN PV */
 
+typedef enum {
+    PAGE_ONE,
+    PAGE_TWO,
+    PAGE_THREE,
+    PAGE_FOUR,
+    NUM_PAGES
+} PAGE;
 
+#define BUTTON_DEBOUNCE_DELAY 200
+
+volatile PAGE currentPage = PAGE_ONE;
+volatile uint8_t buttonPressed = 0;
+volatile uint16_t lastButtonPressTime = 0;
+volatile uint8_t buttonState = 0;
 
 #define MIN_SPEED_KM 1.5    // Minimum speed (in km/h) to consider that the GPS is moving
 #define GPS_EARTH_RADIUS_KM          6371.0 // Earth's radius in kilometers
@@ -86,10 +97,13 @@ char SatelitesNumberString[32];
 
 
 uint16_t readValue;
-float sensitivity = 0.04; // 0.4 for 50A Model
+float sensitivity = 0.04; // 0.04 for 50A Model
 float rawVoltage;
 float current;
 char current_string[32];
+
+
+
 char total_distance_string[32];
 double current_distance;
 
@@ -131,10 +145,8 @@ double haversine_km(double lat1, double lon1, double lat2, double lon2)
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-void MX_GPIO_Init(void);
-void MX_ADC1_Init(void);
 /* USER CODE BEGIN PFP */
-
+void displayPage(PAGE page);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -177,18 +189,17 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   HAL_ADC_Start(&hadc1);
-
   SSD1306_Init();
   DS18B20_Init(DS18B20_Resolution_12bits);
   HAL_GPIO_WritePin(TEST_Pin_GPIO_Port, TEST_Pin_Pin, 0);
-
-
   NEO6_Init(&GpsState, &huart1);
 
   uint32_t DS18B20_delay = 0;
   uint32_t NEO6_delay = 0;
   uint32_t ADC_delay = 0;
-  uint32_t OLED_delay = 0;
+  uint32_t updateScreenTime = 0;
+  uint32_t buttonPressTime = 0;
+  uint32_t HAL_GPIO_TogglePin_delay = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -196,7 +207,11 @@ int main(void)
   while (1)
   {
 
-	 if((HAL_GetTick() - DS18B20_delay) > 1000)
+
+//////////////////////////////////////////////////////////////////////////////////////
+//							      DS18B20_Temperature_Detection
+
+	 if((HAL_GetTick() - DS18B20_delay) > 250)
 	 {
 		 DS18B20_ReadAll();
 		 DS18B20_StartAll();
@@ -211,101 +226,94 @@ int main(void)
 		    DS18B20_GetROM(i, ROM_tmp);
 		   	memset(temp_string, 0, sizeof(temp_string));
 
-		   	sprintf(temp_string, "%.1f *C", temperature);
+		   	sprintf(temp_string, "%.2f *C", temperature);
 		   }
 		}
-	    HAL_GPIO_TogglePin(LED_Pin_GPIO_Port, LED_Pin_Pin);
 		DS18B20_delay = HAL_GetTick();
 	 }
 
 
+	 if((HAL_GetTick() - HAL_GPIO_TogglePin_delay) > 2000)
+	 {
+		 HAL_GPIO_TogglePin(LED_Pin_GPIO_Port, LED_Pin_Pin);
+		 HAL_GPIO_TogglePin_delay = HAL_GetTick();
+	 }
+
+
+//////////////////////////////////////////////////////////////////////////////
+//					Measuring_Current
+
 	  if((HAL_GetTick() - ADC_delay) > 250)
-	  {
-	   HAL_ADC_PollForConversion(&hadc1,1000);
-	   readValue = HAL_ADC_GetValue(&hadc1);
-	   rawVoltage = (float) readValue * 3.3 / 3838;
-	   current =(rawVoltage - 2.5)/sensitivity;
-	   sprintf(current_string,"%.2f A ", current);
-	   ADC_delay = HAL_GetTick();
-	  }
+	   {
+		  HAL_ADC_PollForConversion(&hadc1,1000);
+		  readValue = HAL_ADC_GetValue(&hadc1);
+		  rawVoltage = (float) readValue * 3.300 / 4105;
+		  current =(rawVoltage - 2.500)/sensitivity;
+		  sprintf(current_string,"%.2f A ", current);
 
+		  ADC_delay = HAL_GetTick();
+	   }
 
-	  if((HAL_GetTick() - NEO6_delay) > 100)
+///////////////////////////////////////////////////////////////////////////////
+// 					GPS_Update_Function
+
+	  if((HAL_GetTick() - NEO6_delay) > 500)
 	  {
 	  NEO6_Task(&GpsState);
 
-	  if (GpsState.SpeedKilometers >= MIN_SPEED_KM)
-	  {
-	    if ( (last_latitude != 0.0) && (last_longitude != 0.0))
-	    {
-	  	// Calculate the trip distance using the haversine function
-	     current_distance = haversine_km(last_latitude, last_longitude, GpsState.Latitude, GpsState.Longitude);
-	     GpsState.total_distance += current_distance;
-	    }
+	  	  if (GpsState.SpeedKilometers >= MIN_SPEED_KM)
+	  	  {
+	  		  	  if ( (last_latitude != 0.0) && (last_longitude != 0.0))
+	  		  	  {
+	  		  		  // Calculate the trip distance using the haversine function
+	  		  		  current_distance = haversine_km(last_latitude, last_longitude, GpsState.Latitude, GpsState.Longitude);
+	  		  		  GpsState.total_distance += current_distance;
+	  		  	  }
 
-	  	 last_latitude = GpsState.Latitude;
-	  	 last_longitude = GpsState.Longitude;
+	  		  	  last_latitude = GpsState.Latitude;
+	  		  	  last_longitude = GpsState.Longitude;
+	  	  }
+
+
+	  	  sprintf(total_distance_string, "%.3f km", GpsState.total_distance); // write into the string the total distance with 2 decimal precision
+	  	  sprintf(LatitudeString, "%f", GpsState.Latitude);
+	  	  sprintf(LongitudeString, "%f", GpsState.Longitude);
+	  	  sprintf(SpeedString, "%.2f km/h", GpsState.SpeedKilometers);
+	  	  sprintf(SatelitesNumberString, "%d", GpsState.SatelitesNumber);
+	  	  NEO6_delay = HAL_GetTick();
 	  }
 
+/////////////////////////////////////////////////////////////////////////////////
+//    					Handle_Button_Update_Displayed_Pages
 
-	  	sprintf(total_distance_string, "%.2f km", GpsState.total_distance); // write into the string the total distance with 2 decimal precision
-	    sprintf(LatitudeString, "%f", GpsState.Latitude);
-	    sprintf(LongitudeString, "%f", GpsState.Longitude);
-	    sprintf(SpeedString, "%.2f km/h", GpsState.SpeedKilometers);
-	    sprintf(SatelitesNumberString, "%d", GpsState.SatelitesNumber);
-	    NEO6_delay = HAL_GetTick();
-	  }
+	  if(HAL_GetTick() - buttonPressTime >= 200)
+	   {
+		  if(buttonPressed)
+		   {
+			  buttonPressed = 0;
+			  if(++currentPage >= NUM_PAGES)
+			  {
+				  currentPage = PAGE_ONE;
+			  }
+	         displayPage(currentPage);
+		   }
+		 SSD1306_UpdateScreen();
+	     buttonPressTime = HAL_GetTick();
+	   }
 
+///////////////////////////////////////////////////////////////////////////////////
+//						Update_Information_OnThe_Current_Page
+
+	  if(HAL_GetTick() - updateScreenTime >= 250)
+	      {
+	          displayPage(currentPage);  // This is where you update information on the current page
+	          updateScreenTime = HAL_GetTick();
+	      }
+  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
 
-	  if((HAL_GetTick() - OLED_delay) > 250)
-	   {
-		 SSD1306_GotoXY (0, 0);
-		 SSD1306_Puts ("TMP:", &Font_7x10, 1);
-	     SSD1306_GotoXY (28,0);
-	     SSD1306_Puts (temp_string, &Font_7x10, 1);
-
-	     SSD1306_GotoXY (00, 10);
-	   	 SSD1306_Puts ("Prad:", &Font_7x10, 1);
-	     SSD1306_GotoXY (40,10);
-	     SSD1306_Puts (current_string, &Font_7x10, 1);
-
-
-	     SSD1306_GotoXY (0, 20);
-	     SSD1306_Puts ("P_GPS:", &Font_7x10, 1);
-	     SSD1306_GotoXY (40,20);
-	     SSD1306_Puts (SpeedString, &Font_7x10, 1);
-
-	     SSD1306_GotoXY (0, 30);
-	     SSD1306_Puts ("DYS:", &Font_7x10, 1);
-	     SSD1306_GotoXY (35,30);
-	     SSD1306_Puts (total_distance_string, &Font_7x10, 1);
-
-	     SSD1306_GotoXY (0, 40);
-	   	 SSD1306_Puts ("Lat:", &Font_7x10, 1);
-	     SSD1306_GotoXY (35,40);
-	     SSD1306_Puts (LatitudeString, &Font_7x10, 1);
-
-	     SSD1306_GotoXY (0, 50);
-	   	 SSD1306_Puts ("Lon:", &Font_7x10, 1);
-	     SSD1306_GotoXY (35,50);
-	     SSD1306_Puts (LongitudeString, &Font_7x10, 1);
-
-
-	     SSD1306_GotoXY (85, 0);
-	     SSD1306_Puts ("S:", &Font_7x10, 1);
-	     SSD1306_GotoXY (100,0);
-	     SSD1306_Puts (SatelitesNumberString, &Font_7x10, 1);
-
-	     SSD1306_UpdateScreen();
-	     OLED_delay = HAL_GetTick();
-	   }
-
-
-
-  }
   /* USER CODE END 3 */
 }
 
@@ -358,12 +366,138 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 
 
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
   if(huart == GpsState.neo6_huart)
   {
     NEO6_ReceiveUartChar(&GpsState);
   }
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if (GPIO_Pin == P1_Pin)
+    {
+        uint16_t currentTime = HAL_GetTick();
+
+        if (currentTime - lastButtonPressTime >= BUTTON_DEBOUNCE_DELAY)
+        {
+            lastButtonPressTime = currentTime;
+            buttonState = !buttonState;
+
+            if(buttonState)
+            {
+                buttonPressed = 1;
+            }
+        }
+    }
+}
+
+
+void displayPage(PAGE page)
+{
+    SSD1306_Fill(SSD1306_COLOR_BLACK);
+
+    switch(page)
+    {
+        case PAGE_ONE:
+
+    		 SSD1306_GotoXY (0, 0);
+    		 SSD1306_Puts ("TEM:", &Font_7x10, 1);
+    	     SSD1306_GotoXY (28,0);
+    	     SSD1306_Puts (temp_string, &Font_7x10, 1);
+
+    	     SSD1306_GotoXY (00, 10);
+    	   	 SSD1306_Puts ("CURR:", &Font_7x10, 1);
+    	     SSD1306_GotoXY (40,10);
+    	     SSD1306_Puts (current_string, &Font_7x10, 1);
+
+
+    	     SSD1306_GotoXY (0, 20);
+    	     SSD1306_Puts ("S_GPS:", &Font_7x10, 1);
+    	     SSD1306_GotoXY (40,20);
+    	     SSD1306_Puts (SpeedString, &Font_7x10, 1);
+
+    	     SSD1306_GotoXY (0, 30);
+    	     SSD1306_Puts ("DIS:", &Font_7x10, 1);
+    	     SSD1306_GotoXY (35,30);
+    	     SSD1306_Puts (total_distance_string, &Font_7x10, 1);
+
+    	     SSD1306_GotoXY (0, 40);
+    	   	 SSD1306_Puts ("LAT:", &Font_7x10, 1);
+    	     SSD1306_GotoXY (35,40);
+    	     SSD1306_Puts (LatitudeString, &Font_7x10, 1);
+
+    	     SSD1306_GotoXY (0, 50);
+    	   	 SSD1306_Puts ("LON:", &Font_7x10, 1);
+    	     SSD1306_GotoXY (35,50);
+    	     SSD1306_Puts (LongitudeString, &Font_7x10, 1);
+
+
+    	     SSD1306_GotoXY (85, 0);
+    	     SSD1306_Puts ("S:", &Font_7x10, 1);
+    	     SSD1306_GotoXY (100,0);
+    	     SSD1306_Puts (SatelitesNumberString, &Font_7x10, 1);
+    	     break;
+
+
+        case PAGE_TWO:
+
+
+            SSD1306_GotoXY (23 , 0);
+            SSD1306_Puts ("TEMPERATURE:", &Font_7x10, 1);
+            SSD1306_GotoXY (20 ,10);
+            SSD1306_Puts (temp_string, &Font_11x18, 1);
+
+            SSD1306_GotoXY (33 , 30);
+            SSD1306_Puts ("CURRENT:", &Font_7x10, 1);
+            SSD1306_GotoXY (28 ,40);
+            SSD1306_Puts (current_string, &Font_11x18, 1);
+            break;
+
+
+
+
+        case PAGE_THREE:
+
+            SSD1306_GotoXY (33, 0);
+            SSD1306_Puts ("SPEED GPS:", &Font_7x10, 1);
+            SSD1306_GotoXY (18,10);
+            SSD1306_Puts (SpeedString, &Font_11x18, 1);
+
+            SSD1306_GotoXY (15, 29);
+            SSD1306_Puts ("TOTAL DISTANCE:", &Font_7x10, 1);
+            SSD1306_GotoXY (15,39);
+            SSD1306_Puts (total_distance_string, &Font_7x10, 1);
+
+    	    SSD1306_GotoXY (85, 50);
+    	    SSD1306_Puts ("S:", &Font_7x10, 1);
+    	    SSD1306_GotoXY (100,45);
+    	    SSD1306_Puts (SatelitesNumberString, &Font_11x18, 1);
+            break;
+
+
+
+        case PAGE_FOUR:
+
+            SSD1306_GotoXY (25,0 );
+            SSD1306_Puts ("LATITUDE:", &Font_7x10, 1);
+            SSD1306_GotoXY (8,10);
+            SSD1306_Puts (LatitudeString, &Font_11x18, 1);
+
+            SSD1306_GotoXY (25, 30);
+            SSD1306_Puts ("LONGITUDE:", &Font_7x10, 1);
+            SSD1306_GotoXY (8,40);
+            SSD1306_Puts (LongitudeString, &Font_11x18, 1);
+            break;
+
+        default:
+        	// handle the case when "page" has a value other than those above
+            break;
+    }
+
+    SSD1306_UpdateScreen();
 }
 
 

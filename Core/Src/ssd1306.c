@@ -2,7 +2,7 @@
  * ssd1306.c
  *
  *  Created on: Nov 12, 2023
- *      Author: mateu
+ *      Author: Mateusz Piwowarski
  */
 
 

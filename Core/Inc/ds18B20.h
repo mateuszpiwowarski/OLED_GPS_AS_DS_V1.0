@@ -2,7 +2,7 @@
  * ds18B20.h
  *
  *  Created on: Nov 12, 2023
- *      Author: mateu
+ *      Author: Mateusz Piwowarski
  */
 #ifndef	_DS18B20_H
 #define	_DS18B20_H

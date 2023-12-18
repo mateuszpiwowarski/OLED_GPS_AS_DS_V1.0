@@ -1,8 +1,12 @@
 /*
  * gps_neo6.h
  *
- *  Created on: 6.09.2019
- *      Author: Mateusz Salamon
+ * *    Created on: Nov 12, 2023
+ *      Author: Mateusz Piwowarski
+ *
+
+ *  	Created on: 6.09.2019
+ *      Original Author: Mateusz Salamon
  *		www.msalamon.pl
  *
  *      Website: https://msalamon.pl/lokalizacja-gps-przy-pomocy-neo6mv2-na-stm32/

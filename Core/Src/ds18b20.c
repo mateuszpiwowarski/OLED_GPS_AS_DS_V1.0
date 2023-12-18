@@ -2,7 +2,7 @@
  * ds18b20.c
  *
  *  Created on: Nov 12, 2023
- *      Author: mateu
+ *      Author: Mateusz Piwowarski
  */
 
 #include "ds18b20.h"

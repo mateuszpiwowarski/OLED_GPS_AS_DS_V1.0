@@ -1,8 +1,12 @@
 /*
  * gps_neo6.c
  *
- *  Created on: 6.09.2019
- *      Author: Mateusz Salamon
+ * *    Created on: Nov 12, 2023
+ *      Author: Mateusz Piwowarski
+ *
+
+ *  	Created on: 6.09.2019
+ *      Original Author: Mateusz Salamon
  *		www.msalamon.pl
  *
  *      Website: https://msalamon.pl/lokalizacja-gps-przy-pomocy-neo6mv2-na-stm32/
@@ -313,8 +317,6 @@ void NEO6_ParseGPGSV(NEO6_State *GpsStateHandler)
 	//     $GPGSV,3,2,11,14,25,170,00,16,57,208,39,18,67,296,40,19,40,246,00*74
 	//     $GPGSV,3,3,11,22,42,067,42,24,14,311,43,27,05,244,00,,,,*4D
 
-	// Todo
-	// Do I need to check satellites data?
 }
 
 //

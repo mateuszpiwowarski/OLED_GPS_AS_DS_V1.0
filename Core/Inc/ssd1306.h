@@ -2,7 +2,7 @@
  * ssd1306.h
  *
  *  Created on: Nov 12, 2023
- *      Author: mateu
+ *      Author: Mateusz Piwowarski
  */
 /**
  * original author:  Tilen Majerle<tilen@majerle.eu>
