@@ -4,7 +4,7 @@
 
 ## This project is based on the STM32F103C8T6 microcontroller, which uses various peripherals such as:
 
-* SSD1603 OLED_display
+* SSD1306 OLED_display
 * ACS758LCB Current_sensor
 * DS18B20 Temperature_sensor
 * GPS NEO-6M
